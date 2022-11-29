@@ -1,0 +1,11 @@
+# Environments
+androidTranslator/.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+translate/migrations
+db.sqlite3
+translate/uploads
