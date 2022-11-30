@@ -18,8 +18,11 @@ class Session(models.Model):
     source = models.CharField(max_length=10)
     destination = models.CharField(max_length=10)
     date_initiated = models.DateTimeField(default=timezone.now)
-    file_name = models.CharField(max_length=100, default='')
+    old_file_name = models.CharField(max_length=100, default='')
+    new_file_name = models.CharField(max_length=100, default='')
 
-    def __str__(self):
-        s = self.source.name + ' ' + self.destination.name + self.date_initiated.name
-        return s
+
+class FileStatus(models.Model):
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    status = models.IntegerField()
+
