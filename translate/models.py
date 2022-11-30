@@ -23,3 +23,9 @@ class Session(models.Model):
     def __str__(self):
         s = self.source.name + ' ' + self.destination.name + self.date_initiated.name
         return s
+
+
+class FileStatus(models.Model):
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    status = models.IntegerField()
+
