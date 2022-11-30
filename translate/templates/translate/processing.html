@@ -41,8 +41,8 @@
                     var fileProgressBar = document.getElementById("fileProgressBar");
                     fileProgressBar.style.width = response.status + "%";
                     fileProgressBar.innerHTML = response.status + '%';
-                    if (response.status = 100){
-                        window.location.href = "{% url 'completed' fileName %}";
+                    if (response.status == 100){
+                        window.location.href = "{% url 'edit_translated' fileName %}";
                     }
                 },
                 error: function(response){

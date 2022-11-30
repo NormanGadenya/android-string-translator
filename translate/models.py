@@ -18,7 +18,8 @@ class Session(models.Model):
     source = models.CharField(max_length=10)
     destination = models.CharField(max_length=10)
     date_initiated = models.DateTimeField(default=timezone.now)
-    file_name = models.CharField(max_length=100, default='')
+    old_file_name = models.CharField(max_length=100, default='')
+    new_file_name = models.CharField(max_length=100, default='')
 
 
 class FileStatus(models.Model):
