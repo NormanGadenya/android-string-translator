@@ -67,19 +67,29 @@ def get_file_status(request, fileName):
         return JsonResponse(state, safe=False, status=200)
 
 
+def download_generated(request, fileName):
+    if request.method == 'GET':
+        session = Session.objects.get(old_file_name=fileName)
+        response = HttpResponse(content_type='text/xml')
+        response['Content-Disposition'] = 'attachment; filename="stringDE2.xml"'
+        response.write(session.translatedText)
+        return response
+
+
+def completed_page(request, pk):
+    session = Session.objects.get(pk=pk)
+    context = {'fileName': session.old_file_name}
+    return render(request, 'translate/completed.html', context)
+
+
 def edit_generated(request, fileName):
     session = Session.objects.get(old_file_name=fileName)
-    #Todo change old file name to new file name
     xml_file = fileName + '.xml'
     f = open('translate/uploads/' + xml_file, "r")
     context = {'translated_content': f.read()}
     if request.method == 'POST':
-        stringText = request.post['string_text']
-
-        response = HttpResponse(content_type='text/xml')
-        response['Content-Disposition'] = 'attachment; filename="string.xml"'
-        #Todo fix this issue of downloading files
-        response.write(stringText)
-
-        return response
+        stringText = request.POST['string_text']
+        session.translatedText = stringText
+        session.save()
+        return redirect(resolve_url(completed_page, session.pk))
     return render(request, 'translate/edit_generated.html', context)
