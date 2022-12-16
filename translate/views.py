@@ -1,21 +1,17 @@
 import json
+from threading import Thread
 
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, resolve_url
 from django.core import serializers
 # Create your views here.
-from googletrans import Translator
 
 from translate.models import Language, Session, FileStatus
 from translate.utils import generate_file_name
+from translate.textProcessor import *
 
 
 def home(request):
-    # translator = Translator()
-    # list = ['The quick brown fox', 'jumps over', 'the lazy dog']
-    # translations = translator.translate(json.dumps(list) , dest='ko')
-    # for translation in translations:
-    #     print(translation.origin, ' -> ', translation.text)
     context = {'languages': Language.objects.all()}
     if request.method == 'POST':
         src = request.POST['source_language']
@@ -38,6 +34,13 @@ def home(request):
     return render(request, "translate/index.html", context)
 
 
+def translateText(fileName, fileStatus):
+    xml_file_name = fileName + '.xml'
+    session = fileStatus.session
+    perform_translate('translate/uploads/' + xml_file_name, input_lang=session.source, output_lang=session.destination,
+                      fileStatus=fileStatus, session=session)
+
+
 def processing(request, pk):
     session = Session.objects.get(pk=pk)
     sourceLanguage = Language.objects.filter(code__icontains=session.source)
@@ -53,6 +56,8 @@ def processing(request, pk):
     fileStatus.status = 0
     fileStatus.session = session
     fileStatus.save()
+    thread = Thread(target=translateText, args=(session.old_file_name, fileStatus))
+    thread.start()
 
     return render(request, 'translate/processing.html', context)
 
@@ -71,8 +76,11 @@ def download_generated(request, fileName):
     if request.method == 'GET':
         session = Session.objects.get(old_file_name=fileName)
         response = HttpResponse(content_type='text/xml')
-        response['Content-Disposition'] = 'attachment; filename="stringDE2.xml"'
+        generatedFileName = 'strings_' + session.destination + '.xml'
+        response['Content-Disposition'] = 'attachment; filename=' + generatedFileName
         response.write(session.translatedText)
+
+
         return response
 
 
@@ -84,9 +92,7 @@ def completed_page(request, pk):
 
 def edit_generated(request, fileName):
     session = Session.objects.get(old_file_name=fileName)
-    xml_file = fileName + '.xml'
-    f = open('translate/uploads/' + xml_file, "r")
-    context = {'translated_content': f.read()}
+    context = {'translated_content': session.translatedText}
     if request.method == 'POST':
         stringText = request.POST['string_text']
         session.translatedText = stringText
