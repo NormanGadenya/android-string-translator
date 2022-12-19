@@ -1,3 +1,4 @@
+import os
 import re
 import xml.etree.ElementTree as ET
 
@@ -82,3 +83,4 @@ def perform_translate(xml_file, output_lang, input_lang, fileStatus, session):
 
         fileStatus.status = 100
         fileStatus.save()
+

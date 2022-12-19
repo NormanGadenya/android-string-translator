@@ -3,6 +3,6 @@ version: '3'
 services:
   web:
     build: .
-    command: python3 manage.py runserver 0.0.0.0:8000 --insecure
+    command: sh -c "python3 manage.py migrate && python3 manage.py crontab add && python3 manage.py runserver 0.0.0.0:8000 --insecure"
     ports:
       - "9000:8000"

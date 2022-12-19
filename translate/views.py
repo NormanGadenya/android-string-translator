@@ -3,9 +3,8 @@ from threading import Thread
 
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, resolve_url
-from django.core import serializers
-# Create your views here.
 
+# Create your views here.
 from translate.models import Language, Session, FileStatus
 from translate.utils import generate_file_name
 from translate.textProcessor import *
@@ -39,6 +38,7 @@ def translateText(fileName, fileStatus):
     session = fileStatus.session
     perform_translate('translate/uploads/' + xml_file_name, input_lang=session.source, output_lang=session.destination,
                       fileStatus=fileStatus, session=session)
+    os.remove('translate/uploads/' + xml_file_name)
 
 
 def processing(request, pk):
@@ -79,8 +79,6 @@ def download_generated(request, fileName):
         generatedFileName = 'strings_' + session.destination + '.xml'
         response['Content-Disposition'] = 'attachment; filename=' + generatedFileName
         response.write(session.translatedText)
-
-
         return response
 
 
