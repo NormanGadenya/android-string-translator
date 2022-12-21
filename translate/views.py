@@ -1,13 +1,11 @@
-import json
-from threading import Thread
-
+import os
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, resolve_url
 
 # Create your views here.
-from translate.models import Language, Session, FileStatus
-from translate.utils import generate_file_name
+from translate.models import Language
 from translate.textProcessor import *
+from translate.utils import generate_file_name
 
 
 def home(request):
@@ -37,7 +35,7 @@ def translateText(fileName, fileStatus):
     xml_file_name = fileName + '.xml'
     session = fileStatus.session
     perform_translate('translate/uploads/' + xml_file_name, input_lang=session.source, output_lang=session.destination,
-                      fileStatus=fileStatus, session=session)
+                      session_pk=session.pk)
     os.remove('translate/uploads/' + xml_file_name)
 
 
@@ -67,8 +65,7 @@ def get_file_status(request, fileName):
         session = Session.objects.get(old_file_name=fileName)
         fileStatus = FileStatus.objects.filter(session=session)
         status = fileStatus.values().first()['status']
-
-        state = {'status': status}
+        state = {'status': '{:0.2f}'.format(status)}
         return JsonResponse(state, safe=False, status=200)
 
 

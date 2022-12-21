@@ -1,7 +1,9 @@
 FROM python:3.9-alpine3.13
 LABEL mantainer="libcs.me"
 
-ENV PYTHONBUFFERED 1
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 WORKDIR /app
 

@@ -1,8 +1,11 @@
-import os
+import math
 import re
 import xml.etree.ElementTree as ET
+from threading import Thread
 
-from googletrans import Translator
+import translators as ts
+
+from translate.models import Session, FileStatus
 
 
 def serialize_text(text):
@@ -18,23 +21,16 @@ def serialize_text(text):
 
 
 def translate_internal(to_translate, input_language="auto", output_language="auto"):
-    translator = Translator()
-    to_translate = serialize_text(to_translate)
     try:
         print(to_translate)
-        translation = translator.translate(to_translate, dest=output_language, src=input_language)
-        return translation.text
+        to_translate = serialize_text(to_translate)
+        return ts.translate_text(query_text=to_translate, translator='google', from_language=input_language, to_language=output_language)
     except:
         return to_translate
 
 
-def perform_translate(xml_file, output_lang, input_lang, fileStatus, session):
-    tree = ET.parse(xml_file)
-    root = tree.getroot()
-    totalElements = len(root)
-    status = 1
-    # cycle through elements
-    for i in range(len(root)):
+def process_translation_by_range_of_elements(root, output_lang, input_lang, start_at, end_at, session_pk, total_elements):
+    for i in range(start_at,end_at):
         isTranslatable = root[i].get('translatable')
         if (root[i].tag == 'string') & (isTranslatable != 'false'):
             toTranslate = root[i].text
@@ -52,7 +48,6 @@ def perform_translate(xml_file, output_lang, input_lang, fileStatus, session):
                                                                      input_language=input_lang)
         if root[i].tag == 'string-array':
             for j in range(len(root[i])):
-                # for each translatable string call the translation subroutine and replace the string by its translation
                 isTranslatable = root[i][j].get('translatable')
                 if (root[i][j].tag == 'item') & (isTranslatable != 'false'):
                     # translate text and fix any possible issues translator creates
@@ -72,15 +67,47 @@ def perform_translate(xml_file, output_lang, input_lang, fileStatus, session):
                                 root[i][j][element].tail = " " + translate_internal(root[i][j][element].tail,
                                                                                     output_language=output_lang,
                                                                                     input_language=input_lang)
-        status += 1
-        percentageStatus = (status / totalElements) * 99
-        fileStatus.status = percentageStatus
-        fileStatus.save()
-    for dataElement in tree.iter('resources'):
+        current_session = Session.objects.get(pk=session_pk)
+        current_status = FileStatus.objects.get(session=current_session)
+        current_percentage = current_status.status
+        number_of_elements_translated = (current_percentage / 99) * total_elements
+        number_of_elements_translated += 1.0
+        percentageStatus = (number_of_elements_translated / total_elements) * 99
+        current_status.status = percentageStatus
+        current_status.save()
 
-        session.translatedText = ET.tostring(dataElement, encoding='unicode')
-        session.save()
 
-        fileStatus.status = 100
-        fileStatus.save()
+def perform_translate(xml_file, output_lang, input_lang, session_pk):
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
+    totalElements = len(root)
+    # cycle through elements
+
+    ending_position_first = math.floor(totalElements/2)
+    starting_position_second = totalElements - ending_position_first
+
+    # split string file into two and perform translation in two threads
+    thread_1st_half = Thread(target=process_translation_by_range_of_elements, args=(root, output_lang, input_lang, 0,
+                                                                                    ending_position_first, session_pk,
+                                                                                    totalElements))
+    thread_1st_half.start()
+    thread_2nd_half = Thread(target=process_translation_by_range_of_elements,
+                             args=(root, output_lang, input_lang, starting_position_second, totalElements, session_pk,
+                                   totalElements))
+    thread_2nd_half.start()
+
+    thread_1st_half.join()
+    thread_2nd_half.join()
+
+    if not (thread_1st_half.is_alive() and thread_2nd_half.is_alive()):
+        current_session = Session.objects.get(pk=session_pk)
+        current_status = FileStatus.objects.get(session=current_session)
+
+        for dataElement in tree.iter('resources'):
+            current_session.translatedText = ET.tostring(dataElement, encoding='unicode')
+            current_session.save()
+
+            current_status.status = 100
+            current_status.save()
+
 

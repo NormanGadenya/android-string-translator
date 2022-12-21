@@ -24,5 +24,5 @@ class Session(models.Model):
 
 class FileStatus(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
-    status = models.IntegerField()
+    status = models.FloatField()
 
