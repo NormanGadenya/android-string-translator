@@ -1,0 +1,27 @@
+{% extends "translate/base.html" %}
+{% block content %}
+{% load static %}
+    <section  style="margin-top:50px" >
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <img src="{% static 'translate/images/Done-rafiki.png' %}" width="100%">
+                </div>
+                <div class="col-6"  style="height:300px;align-items: center;justify-content: center;flex-wrap: wrap;flex-direction: column;display: flex; margin-top:50px ">
+                    <p>Your file is ready, click the download button </p>
+                    <form action="{% url 'download' fileName %}">
+                        {% csrf_token %}
+                        <button class="btn btn-primary" type="submit" style="margin-top:10px;background-color:#263238;color:#92E3A9"><i class="fa fa-download"></i>&nbsp;Download</button>
+
+                    </form>
+
+                    <p style="margin-top:100px"> Thanks for using our services, hope to see you soon</p>
+                    <form action="{% url 'home' %}">
+                        <button class="btn btn-primary" type="submit" style="margin-top:10px;background-color:#263238;color:#92E3A9;"><i class="fa fa-home"></i>&nbsp;Back Home</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}

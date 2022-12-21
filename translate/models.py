@@ -19,10 +19,10 @@ class Session(models.Model):
     destination = models.CharField(max_length=10)
     date_initiated = models.DateTimeField(default=timezone.now)
     old_file_name = models.CharField(max_length=100, default='')
-    new_file_name = models.CharField(max_length=100, default='')
+    translatedText = models.TextField()
 
 
 class FileStatus(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
-    status = models.IntegerField()
+    status = models.FloatField()
 
