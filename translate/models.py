@@ -5,15 +5,6 @@ from django.db import models
 
 # Create your models here.
 
-
-class Language(models.Model):
-    code = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
 class Session(models.Model):
     source = models.CharField(max_length=10)
     destination = models.CharField(max_length=10)
