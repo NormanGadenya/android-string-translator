@@ -1,6 +1,13 @@
-.bg-green {
-    background-color: #263238
-    color: #92E3A9
+.nav-bar-default {
+    background-color: #263238;
+    color: #92E3A9;
+}
+.nav-bar-default a{
+    color: #92E3A9;
+}
+
+.nav-bar-default a:hover{
+    color: #72E3A9;
 }
 
 .footer {
@@ -10,4 +17,16 @@
    width: 100%;
    background-color: #263238;
    color: #92E3A9;
+}
+
+.submit-button-def {
+    margin-top:10px;
+    background-color: #263238 !important;
+    color: #92E3A9;
+}
+
+.form-selector-custom  {
+    background-color:#F5F5F5 !important;
+    color:#263238 !important;
+    border:1px solid #263238 !important;
 }

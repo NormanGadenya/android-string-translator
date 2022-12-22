@@ -81,7 +81,6 @@ def perform_translate(xml_file, output_lang, input_lang, session_pk):
     tree = ET.parse(xml_file)
     root = tree.getroot()
     totalElements = len(root)
-    # cycle through elements
 
     ending_position_first = math.floor(totalElements/2)
     starting_position_second = totalElements - ending_position_first

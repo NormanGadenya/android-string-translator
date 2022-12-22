@@ -3,20 +3,20 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, resolve_url
 
 # Create your views here.
-from translate.models import Language
 from translate.textProcessor import *
-from translate.utils import generate_file_name
+from translate.utils import *
 
 
 def home(request):
-    context = {'languages': Language.objects.all()}
+    context = {'languages': get_languages_and_codes()}
     if request.method == 'POST':
         src = request.POST['source_language']
         dest = request.POST['destination_language']
         files = request.FILES
         string_file = files['string_file']  # returns a dict-like object
         generatedFileName = generate_file_name(10)
-
+        if src == 'Open to select the source language':
+            src = 'en'
         session = Session()
         session.source = src
         session.destination = dest
@@ -41,8 +41,8 @@ def translateText(fileName, fileStatus):
 
 def processing(request, pk):
     session = Session.objects.get(pk=pk)
-    sourceLanguage = Language.objects.filter(code__icontains=session.source)
-    destinationLanguage = Language.objects.filter(code__icontains=session.destination)
+    sourceLanguage = get_language_by_code_name(session.source)
+    destinationLanguage = get_language_by_code_name(session.destination)
     context = {
         'session': session,
         'sourceLanguage': sourceLanguage,
