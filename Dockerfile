@@ -11,6 +11,8 @@ ADD . /app
 
 COPY ./requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip
+RUN apk update \
+    && apk --no-cache --update add libffi-dev
 RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers
 RUN apk add --no-cache jpeg-dev zlib-dev
 RUN pip install -r requirements.txt
