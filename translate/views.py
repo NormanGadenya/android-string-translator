@@ -15,7 +15,8 @@ def home(request):
         files = request.FILES
         string_file = files['string_file']  # returns a dict-like object
         generatedFileName = generate_file_name(10)
-
+        if src == 'Open to select the source language':
+            src = 'en'
         session = Session()
         session.source = src
         session.destination = dest

@@ -39,7 +39,7 @@
                         <p style="font-size:20px">Select the source language</p>
                     </div>
                     <div class="col" >
-                        <select class="form-select form-select-md" aria-label=".form-select-sm" style="background-color:#F5F5F5;color:#263238; border:1px solid #263238;" required name="source_language">
+                        <select class="form-selector-custom form-select form-select-md" aria-label=".form-select-sm" required name="source_language">
                           <option selected>Open to select the source language</option>
                             {% for language in languages %}
                                  <option value="{{ language.code }}">{{ language.name}}</option>
@@ -53,13 +53,13 @@
                         <p style="font-size:20px">Select the destination language</p>
                     </div>
                     <div class="col" >
-                        <select class="form-select form-select-md" aria-label=".form-select-sm" style="background-color:#F5F5F5;color:#263238; border:1px solid #263238;" required name="destination_language">
+                        <select class="form-selector-custom form-select   form-select-md" aria-label=".form-select-sm"  required name="destination_language">
                           <option selected>Open to select the destination language</option>
                             {% for language in languages %}
                                  <option value="{{ language.code }}">{{ language.name}}</option>
                             {% endfor %}
                         </select>
-                        <button class="btn btn-primary" type="submit" style="margin-top:10px;background-color:#263238;color:#92E3A9">Done</button>
+                        <button class="btn submit-button-def btn-primary " type="submit">Done</button>
                     </div>
                 </div>
 
