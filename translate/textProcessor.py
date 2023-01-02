@@ -24,7 +24,7 @@ def translate_internal(to_translate, input_language="auto", output_language="aut
 
         print(to_translate)
         to_translate = serialize_text(to_translate)
-        return ts.translate_text(query_text=to_translate, translator='bing', from_language=input_language, to_language=output_language)
+        return ts.translate_text(query_text=to_translate, translator='google', from_language=input_language, to_language=output_language)
 
 
 def process_translation_by_range_of_elements(root, output_lang, input_lang, start_at, end_at, session_pk, total_elements):
