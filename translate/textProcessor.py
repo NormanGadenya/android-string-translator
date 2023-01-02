@@ -24,7 +24,7 @@ def translate_internal(to_translate, input_language="auto", output_language="aut
     try:
         print(to_translate)
         to_translate = serialize_text(to_translate)
-        return ts.translate_text(query_text=to_translate, translator='google', from_language=input_language, to_language=output_language)
+        return ts.translate_text(query_text=to_translate, translator='bing', from_language=input_language, to_language=output_language)
     except:
         return to_translate
 
