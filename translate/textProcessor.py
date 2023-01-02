@@ -2,7 +2,8 @@ import math
 import re
 import xml.etree.ElementTree as ET
 from threading import Thread
-
+import os
+import slack
 import translators as ts
 
 from translate.models import Session, FileStatus
@@ -21,14 +22,21 @@ def serialize_text(text):
 
 
 def translate_internal(to_translate, input_language="auto", output_language="auto"):
-
-        print(to_translate)
+    try:
         to_translate = serialize_text(to_translate)
-        return ts.translate_text(query_text=to_translate, translator='bing', from_language=input_language, to_language=output_language)
+        return ts.translate_text(query_text=to_translate, translator='bing', from_language=input_language,
+                                 to_language=output_language)
+    except:
+        file = open("translate/errorLogs/error_log.txt", "a")
+        file.write("Failed to translate: " + to_translate + " from :" + input_language + " to :" + output_language)
+        file.write("\n")
+        file.close()
+        return to_translate
 
 
-def process_translation_by_range_of_elements(root, output_lang, input_lang, start_at, end_at, session_pk, total_elements):
-    for i in range(start_at,end_at):
+def process_translation_by_range_of_elements(root, output_lang, input_lang, start_at, end_at, session_pk,
+                                             total_elements):
+    for i in range(start_at, end_at):
         isTranslatable = root[i].get('translatable')
         if (root[i].tag == 'string') & (isTranslatable != 'false'):
             toTranslate = root[i].text
@@ -39,11 +47,13 @@ def process_translation_by_range_of_elements(root, output_lang, input_lang, star
             if len(root[i]) != 0:
                 for element in range(len(root[i])):
                     if root[i][element].text is not None:
-                        root[i][element].text = " " + translate_internal(root[i][element].text, output_language=output_lang,
-                                                                     input_language=input_lang)
+                        root[i][element].text = " " + translate_internal(root[i][element].text,
+                                                                         output_language=output_lang,
+                                                                         input_language=input_lang)
                     if root[i][element].tail is not None:
-                        root[i][element].tail = " " + translate_internal(root[i][element].tail, output_language=output_lang,
-                                                                     input_language=input_lang)
+                        root[i][element].tail = " " + translate_internal(root[i][element].tail,
+                                                                         output_language=output_lang,
+                                                                         input_language=input_lang)
         if root[i].tag == 'string-array':
             for j in range(len(root[i])):
                 isTranslatable = root[i][j].get('translatable')
@@ -80,7 +90,7 @@ def perform_translate(xml_file, output_lang, input_lang, session_pk):
     root = tree.getroot()
     totalElements = len(root)
 
-    ending_position_first = math.floor(totalElements/2)
+    ending_position_first = math.floor(totalElements / 2)
     starting_position_second = totalElements - ending_position_first
 
     # split string file into two and perform translation in two threads
@@ -106,5 +116,3 @@ def perform_translate(xml_file, output_lang, input_lang, session_pk):
 
             current_status.status = 100
             current_status.save()
-
-
