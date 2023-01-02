@@ -17,22 +17,21 @@
       integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
       crossorigin="anonymous"></script>
 </head>
-<body>
-    <header>
-        <nav class="nav-bar-default navbar  navbar-expand-lg" >
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'home' %}">Android string translator</a>
-            </div>
-        </nav>
-    </header>
+<header>
+    <nav class="nav-bar-default navbar  navbar-expand-lg" >
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">Android string translator</a>
+        </div>
+    </nav>
+</header>
+<body style="margin-bottom:50px;">
 
     {% block content %}{% endblock %}
 
-    <footer class="footer">
-        <div class="container-fluid" style="margin-top:15px" >
-            <p style="font-style:italic">Powered by Neuralbit</p>
-        </div>
-    </footer>
-
 </body>
+<footer class="footer" style="margin-top:50px">
+    <div class="container-fluid"  >
+        <p style="font-style:italic">Powered by Neuralbit</p>
+    </div>
+</footer>
 </html>
