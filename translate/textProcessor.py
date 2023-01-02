@@ -3,7 +3,6 @@ import re
 import xml.etree.ElementTree as ET
 from threading import Thread
 import os
-import slack
 import translators as ts
 
 from translate.models import Session, FileStatus
@@ -116,3 +115,4 @@ def perform_translate(xml_file, output_lang, input_lang, session_pk):
 
             current_status.status = 100
             current_status.save()
+

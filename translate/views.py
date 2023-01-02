@@ -94,3 +94,4 @@ def edit_generated(request, fileName):
         session.save()
         return redirect(resolve_url(completed_page, session.pk))
     return render(request, 'translate/edit_generated.html', context)
+
