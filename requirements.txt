@@ -4,3 +4,4 @@ django-environ
 environ~=1.0
 django-crontab
 translators
+js2py
