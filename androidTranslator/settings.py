@@ -141,5 +141,5 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 CRONJOBS = [
     ('0 1 * * *', 'translate.cron.deleteOldSessions'),
-    ('0 0 25 * *', 'translate.cron.sendErrorLogsToMail')
+    ('0 0 25 * *', 'translate.cron.sendErrorLogsToMail'),
 ]
