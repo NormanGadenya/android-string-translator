@@ -1,12 +1,10 @@
-
+<a href="http://129.151.163.30:1010" target="_blank"><img src="https://user-images.githubusercontent.com/28120359/209174334-2626515b-48d3-45c6-950f-b43693488e5b.png" align="left" height="100" width="100" ></a>
+<br>
 # Android String Translator 
 
 This is a django web application that takes in the strings.xml file, translates to the desired language and then allows the user to download the output in xml format
 
 
-
-
-![favicon](https://user-images.githubusercontent.com/28120359/209174334-2626515b-48d3-45c6-950f-b43693488e5b.png )
 
 ## Installation
 
