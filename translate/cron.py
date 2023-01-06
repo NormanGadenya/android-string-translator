@@ -14,7 +14,10 @@ def deleteOldSessions():
     sessions = Session.objects.all()
     for session in sessions:
         if (timezone.now() - session.date_initiated).days > 0:
+            xml_file_name = session.old_file_name + '.xml'
             session.delete()
+            if os.path.exists(upload_file_path + xml_file_name):
+                os.remove(upload_file_path + xml_file_name)
 
 
 def sendErrorLogsToMail():
@@ -23,12 +26,9 @@ def sendErrorLogsToMail():
     message = "Please find attached an email containing the error logs for Android String Translator"
     receiver = settings.EMAIL_HOST_USER
     sender = settings.EMAIL_HOST_USER  # send mail to self
-    if receiver is not None or sender is not None:
+    if (receiver is not None or sender is not None) and (os.path.exists(error_log_file_path + 'error_log.txt')):
         file = open(error_log_file_path + "error_log.txt", "r")
         email = EmailMessage(subject=subject, body=message, from_email=sender, to=[receiver])
         email.attach("error_log.txt", file.read(), 'text/plain')
         email.content_subtype = "text/plain"
         email.send()
-
-
-
